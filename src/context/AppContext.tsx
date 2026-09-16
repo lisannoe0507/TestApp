@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DEFAULT_FILTERS, FilterSettings, Quest } from "../types";
-import { MOCK_QUESTS } from "../data/quests";
+import { getAllQuests } from "../data/db";
 
 const FILTERS_KEY = "sidequest.filters";
 const SAVED_KEY = "sidequest.saved";
@@ -18,6 +18,7 @@ interface AppContextValue {
   removeSaved: (id: string) => void;
   resetDeck: () => void;
   loading: boolean;
+  refreshQuests: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextValue | undefined>(undefined);
@@ -26,19 +27,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<FilterSettings>(DEFAULT_FILTERS);
   const [savedQuests, setSavedQuests] = useState<Quest[]>([]);
   const [seenIds, setSeenIds] = useState<string[]>([]);
+  const [allQuests, setAllQuests] = useState<Quest[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const [rawFilters, rawSaved, rawSeen] = await Promise.all([
+        const [rawFilters, rawSaved, rawSeen, quests] = await Promise.all([
           AsyncStorage.getItem(FILTERS_KEY),
           AsyncStorage.getItem(SAVED_KEY),
           AsyncStorage.getItem(SEEN_KEY),
+          getAllQuests(),
         ]);
         if (rawFilters) setFiltersState(JSON.parse(rawFilters));
         if (rawSaved) setSavedQuests(JSON.parse(rawSaved));
         if (rawSeen) setSeenIds(JSON.parse(rawSeen));
+        setAllQuests(quests);
       } catch (e) {
         // Ignore corrupted local storage and start fresh.
       } finally {
@@ -46,6 +50,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
     })();
   }, []);
+
+  const refreshQuests = async () => {
+    setAllQuests(await getAllQuests());
+  };
 
   const setFilters = (f: FilterSettings) => {
     setFiltersState(f);
@@ -89,7 +97,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deck = useMemo(() => {
-    return MOCK_QUESTS.filter((q) => {
+    return allQuests.filter((q) => {
       if (seenIds.includes(q.id)) return false;
       if (!filters.categories.includes(q.category)) return false;
       if (q.distanceKm > filters.maxDistanceKm) return false;
@@ -97,11 +105,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (filters.groupSize < q.minGroupSize || filters.groupSize > q.maxGroupSize) return false;
       return true;
     });
-  }, [filters, seenIds]);
+  }, [filters, seenIds, allQuests]);
 
   return (
     <AppContext.Provider
-      value={{ filters, setFilters, savedQuests, seenIds, deck, likeQuest, passQuest, removeSaved, resetDeck, loading }}
+      value={{ filters, setFilters, savedQuests, seenIds, deck, likeQuest, passQuest, removeSaved, resetDeck, loading, refreshQuests }}
     >
       {children}
     </AppContext.Provider>

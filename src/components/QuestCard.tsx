@@ -1,13 +1,13 @@
 import React, { useRef } from "react";
 import { Animated, Dimensions, PanResponder, StyleSheet, Text, View, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { CATEGORY_ICONS, CATEGORY_LABELS, Quest } from "../types";
+import { CATEGORY_ICONS, CATEGORY_LABELS, QuestWithDistance } from "../types";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.28;
 
 interface Props {
-  quest: Quest;
+  quest: QuestWithDistance;
   onSwipeLeft: () => void;
   onSwipeRight: () => void;
   isTop: boolean;
@@ -117,7 +117,9 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
             <Ionicons name="location-outline" size={15} color="#fff" />
-            <Text style={styles.metaText}>{quest.distanceKm} km</Text>
+            <Text style={styles.metaText}>
+              {quest.distanceKm === null ? "? km" : `${quest.distanceKm.toFixed(1)} km`}
+            </Text>
           </View>
           <View style={styles.metaItem}>
             <Ionicons name="people-outline" size={15} color="#fff" />

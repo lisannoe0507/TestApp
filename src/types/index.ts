@@ -7,12 +7,20 @@ export interface Quest {
   description: string;
   imageUrl: string;
   price: number; // 0 = free, in euros
-  distanceKm: number;
+  latitude: number;
+  longitude: number;
   minGroupSize: number;
   maxGroupSize: number;
   city: string;
   tags: string[];
   rating: number; // 0-5
+}
+
+// A Quest with its live distance to the user filled in (see haversineKm in
+// src/utils/location.ts). distanceKm is null while the user's location is
+// unknown (permission denied/unavailable) — such quests aren't distance-filtered.
+export interface QuestWithDistance extends Quest {
+  distanceKm: number | null;
 }
 
 export interface FilterSettings {

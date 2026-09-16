@@ -5,7 +5,7 @@ import QuestCard from "../components/QuestCard";
 import { useApp } from "../context/AppContext";
 
 export default function DiscoverScreen() {
-  const { deck, likeQuest, passQuest, resetDeck } = useApp();
+  const { deck, likeQuest, passQuest, resetDeck, locationStatus, requestLocation } = useApp();
   const visible = deck.slice(0, 3);
 
   return (
@@ -14,6 +14,15 @@ export default function DiscoverScreen() {
         <Text style={styles.logo}>Side Quest</Text>
         <Text style={styles.subtitle}>Swipe voor je volgende avontuur</Text>
       </View>
+
+      {(locationStatus === "denied" || locationStatus === "unavailable") && (
+        <TouchableOpacity style={styles.locationBanner} onPress={requestLocation}>
+          <Ionicons name="location-outline" size={16} color="#FCD34D" />
+          <Text style={styles.locationBannerText}>
+            Locatie niet beschikbaar — afstanden zijn onbekend. Tik om opnieuw te proberen.
+          </Text>
+        </TouchableOpacity>
+      )}
 
       <View style={styles.deckArea}>
         {visible.length === 0 ? (
@@ -82,6 +91,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#9ca3af",
     marginTop: 2,
+  },
+  locationBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#292515",
+    marginHorizontal: 24,
+    marginBottom: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+    gap: 8,
+  },
+  locationBannerText: {
+    color: "#FCD34D",
+    fontSize: 12,
+    flex: 1,
+    marginLeft: 8,
   },
   deckArea: {
     flex: 1,

@@ -18,6 +18,14 @@ function getDb() {
 
 async function ensureInitialized() {
   const db = await getDb();
+
+  // Drop the table if it still has the old (pre-GPS) schema, so it gets
+  // recreated with latitude/longitude and reseeded below.
+  const existingColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(quests)");
+  if (existingColumns.length > 0 && !existingColumns.some((c) => c.name === "latitude")) {
+    await db.execAsync("DROP TABLE quests");
+  }
+
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS quests (
       id TEXT PRIMARY KEY NOT NULL,
@@ -26,7 +34,8 @@ async function ensureInitialized() {
       description TEXT NOT NULL,
       image_url TEXT NOT NULL,
       price REAL NOT NULL,
-      distance_km REAL NOT NULL,
+      latitude REAL NOT NULL,
+      longitude REAL NOT NULL,
       min_group_size INTEGER NOT NULL,
       max_group_size INTEGER NOT NULL,
       city TEXT NOT NULL,
@@ -46,9 +55,9 @@ async function seedQuests(quests: Quest[]) {
   for (const q of quests) {
     await db.runAsync(
       `INSERT OR IGNORE INTO quests
-        (id, category, title, description, image_url, price, distance_km, min_group_size, max_group_size, city, tags, rating)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [q.id, q.category, q.title, q.description, q.imageUrl, q.price, q.distanceKm, q.minGroupSize, q.maxGroupSize, q.city, JSON.stringify(q.tags), q.rating]
+        (id, category, title, description, image_url, price, latitude, longitude, min_group_size, max_group_size, city, tags, rating)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [q.id, q.category, q.title, q.description, q.imageUrl, q.price, q.latitude, q.longitude, q.minGroupSize, q.maxGroupSize, q.city, JSON.stringify(q.tags), q.rating]
     );
   }
 }
@@ -61,7 +70,8 @@ function rowToQuest(row: any): Quest {
     description: row.description,
     imageUrl: row.image_url,
     price: row.price,
-    distanceKm: row.distance_km,
+    latitude: row.latitude,
+    longitude: row.longitude,
     minGroupSize: row.min_group_size,
     maxGroupSize: row.max_group_size,
     city: row.city,
@@ -82,9 +92,9 @@ export async function addQuest(quest: Omit<Quest, "id">): Promise<Quest> {
   const id = `local-${Date.now()}-${Math.round(Math.random() * 1e6)}`;
   await db.runAsync(
     `INSERT INTO quests
-      (id, category, title, description, image_url, price, distance_km, min_group_size, max_group_size, city, tags, rating)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [id, quest.category, quest.title, quest.description, quest.imageUrl, quest.price, quest.distanceKm, quest.minGroupSize, quest.maxGroupSize, quest.city, JSON.stringify(quest.tags), quest.rating]
+      (id, category, title, description, image_url, price, latitude, longitude, min_group_size, max_group_size, city, tags, rating)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [id, quest.category, quest.title, quest.description, quest.imageUrl, quest.price, quest.latitude, quest.longitude, quest.minGroupSize, quest.maxGroupSize, quest.city, JSON.stringify(quest.tags), quest.rating]
   );
   return { ...quest, id };
 }

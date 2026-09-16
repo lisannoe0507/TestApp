@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sidequest.app"
+      "bundleIdentifier": "com.sidequest.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Side Quest gebruikt je locatie om activiteiten in de buurt te tonen en de afstand te berekenen."
+      }
     },
     "android": {
       "package": "com.sidequest.app",
@@ -20,10 +23,19 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Side Quest gebruikt je locatie om activiteiten in de buurt te tonen en de afstand te berekenen."
+        }
+      ]
+    ]
   }
 }

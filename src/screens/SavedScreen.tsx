@@ -2,12 +2,12 @@ import React from "react";
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useApp } from "../context/AppContext";
-import { CATEGORY_LABELS, Quest } from "../types";
+import { CATEGORY_LABELS, QuestWithDistance } from "../types";
 
 export default function SavedScreen() {
   const { savedQuests, removeSaved } = useApp();
 
-  const renderItem = ({ item }: { item: Quest }) => (
+  const renderItem = ({ item }: { item: QuestWithDistance }) => (
     <View style={styles.card}>
       <Image source={{ uri: item.imageUrl }} style={styles.thumb} />
       <View style={styles.cardBody}>
@@ -18,7 +18,7 @@ export default function SavedScreen() {
         <View style={styles.metaRow}>
           <Text style={styles.metaText}>{item.city}</Text>
           <Text style={styles.metaDot}>·</Text>
-          <Text style={styles.metaText}>{item.distanceKm} km</Text>
+          <Text style={styles.metaText}>{item.distanceKm === null ? "? km" : `${item.distanceKm.toFixed(1)} km`}</Text>
           <Text style={styles.metaDot}>·</Text>
           <Text style={styles.metaText}>{item.price === 0 ? "Gratis" : `€${item.price}`}</Text>
         </View>

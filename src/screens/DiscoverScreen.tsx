@@ -13,7 +13,10 @@ export default function DiscoverScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.logo}>Side Quest</Text>
+        <Text style={styles.logo}>
+          <Text style={{ color: colors.brand }}>Side</Text>
+          <Text style={{ color: colors.secondary }}> Quest</Text>
+        </Text>
         <Text style={styles.subtitle}>What will you try next?</Text>
       </View>
 

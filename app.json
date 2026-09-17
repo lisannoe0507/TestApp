@@ -18,7 +18,7 @@
     "android": {
       "package": "com.sidequest.app",
       "adaptiveIcon": {
-        "backgroundColor": "#023E8A",
+        "backgroundColor": "#FFFFFF",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -42,7 +42,7 @@
           "image": "./assets/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#023E8A"
+          "backgroundColor": "#FFFFFF"
         }
       ]
     ]

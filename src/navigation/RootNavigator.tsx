@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import DiscoverScreen from "../screens/DiscoverScreen";
 import SavedScreen from "../screens/SavedScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 import { colors, fontFamily } from "../theme";
 
 const Tab = createBottomTabNavigator();
@@ -35,7 +35,7 @@ export default function RootNavigator() {
             const icons: Record<string, string> = {
               Ontdekken: focused ? "git-branch" : "git-branch-outline",
               Opgeslagen: focused ? "bookmark" : "bookmark-outline",
-              Instellingen: focused ? "settings" : "settings-outline",
+              Profiel: focused ? "person-circle" : "person-circle-outline",
             };
             return <Ionicons name={icons[route.name] as any} size={size} color={color} />;
           },
@@ -43,7 +43,7 @@ export default function RootNavigator() {
       >
         <Tab.Screen name="Ontdekken" component={DiscoverScreen} />
         <Tab.Screen name="Opgeslagen" component={SavedScreen} />
-        <Tab.Screen name="Instellingen" component={SettingsScreen} />
+        <Tab.Screen name="Profiel" component={ProfileScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );

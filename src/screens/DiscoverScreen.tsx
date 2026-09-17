@@ -1,24 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import QuestCard from "../components/QuestCard";
+import FiltersModal from "../components/FiltersModal";
 import { useApp } from "../context/AppContext";
 import { colors, fontFamily, radius } from "../theme";
 
 export default function DiscoverScreen() {
   const { deck, likeQuest, passQuest, resetDeck, locationStatus, requestLocation } = useApp();
+  const [filtersVisible, setFiltersVisible] = useState(false);
   const visible = deck.slice(0, 3);
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.logo}>
-          <Text style={{ color: colors.brand }}>Side</Text>
-          <Text style={{ color: colors.secondary }}> Quest</Text>
-        </Text>
-        <Text style={styles.subtitle}>What will you try next?</Text>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.logo}>
+              <Text style={{ color: colors.brand }}>Side</Text>
+              <Text style={{ color: colors.secondary }}> Quest</Text>
+            </Text>
+            <Text style={styles.subtitle}>What will you try next?</Text>
+          </View>
+          <TouchableOpacity style={styles.filterButton} onPress={() => setFiltersVisible(true)}>
+            <Ionicons name="options-outline" size={20} color={colors.textMuted} />
+          </TouchableOpacity>
+        </View>
       </View>
+
+      <FiltersModal visible={filtersVisible} onClose={() => setFiltersVisible(false)} />
 
       {(locationStatus === "denied" || locationStatus === "unavailable") && (
         <TouchableOpacity style={styles.locationBanner} onPress={requestLocation}>
@@ -35,11 +46,16 @@ export default function DiscoverScreen() {
             <Ionicons name="git-branch-outline" size={56} color={colors.textMuted} />
             <Text style={styles.emptyTitle}>Even niets nieuws hier</Text>
             <Text style={styles.emptyText}>
-              Je hebt alles gezien binnen je huidige filters. Pas ze aan in Instellingen, of begin opnieuw.
+              Je hebt alles gezien binnen je huidige filters. Pas ze aan, of begin opnieuw.
             </Text>
-            <TouchableOpacity style={styles.resetButton} onPress={resetDeck}>
-              <Text style={styles.resetButtonText}>Begin opnieuw</Text>
-            </TouchableOpacity>
+            <View style={styles.emptyActions}>
+              <TouchableOpacity style={styles.secondaryButton} onPress={() => setFiltersVisible(true)}>
+                <Text style={styles.secondaryButtonText}>Filters aanpassen</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.resetButton} onPress={resetDeck}>
+                <Text style={styles.resetButtonText}>Begin opnieuw</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           visible
@@ -86,6 +102,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
     paddingTop: 8,
     paddingBottom: 12,
+  },
+  headerTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  filterButton: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   logo: {
     fontFamily: fontFamily.bold,
@@ -162,10 +193,27 @@ const styles = StyleSheet.create({
     marginTop: 8,
     lineHeight: 20,
   },
-  resetButton: {
+  emptyActions: {
+    flexDirection: "row",
+    gap: 12,
     marginTop: 20,
+  },
+  secondaryButton: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: radius.button,
+  },
+  secondaryButtonText: {
+    fontFamily: fontFamily.semiBold,
+    color: colors.text,
+    fontSize: 14,
+  },
+  resetButton: {
     backgroundColor: colors.brand,
-    paddingHorizontal: 24,
+    paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: radius.button,
   },

@@ -96,6 +96,41 @@ export function questMatchesDateRange(eventDate: string | undefined, range: Date
   return days <= DATE_RANGE_MAX_DAYS[range];
 }
 
+// Personal exclusion preferences ("never show me this"), set once on a
+// profile rather than re-picked every session like the Discover filters.
+// Matches against a quest's free-text tags, so adding a new preference here
+// doesn't require a data-model change - just a set of tag keywords to catch.
+export interface PreferenceOption {
+  id: string;
+  label: string;
+  icon: string;
+  matchTags: string[];
+}
+
+export const PREFERENCE_OPTIONS: PreferenceOption[] = [
+  { id: "no-alcohol", label: "Geen alcohol", icon: "wine-outline", matchTags: ["bier", "wijn", "borrel", "cocktail", "jenever", "alcohol"] },
+  { id: "no-pets", label: "Geen huisdieren", icon: "paw-outline", matchTags: ["huisdieren", "dieren"] },
+];
+
+export interface UserProfile {
+  name: string;
+  excludedPreferenceIds: string[];
+}
+
+export const DEFAULT_PROFILE: UserProfile = {
+  name: "",
+  excludedPreferenceIds: [],
+};
+
+export function questMatchesPreferences(tags: string[], excludedIds: string[]): boolean {
+  if (excludedIds.length === 0) return true;
+  const lowerTags = tags.map((t) => t.toLowerCase());
+  return !excludedIds.some((id) => {
+    const pref = PREFERENCE_OPTIONS.find((p) => p.id === id);
+    return pref?.matchTags.some((mt) => lowerTags.some((tag) => tag.includes(mt)));
+  });
+}
+
 export type GroupLabel = "SOLO" | "DUO" | "GROUP" | "COMMUNITY";
 
 // Derives which of the solo/duo/group/community badges apply to a quest's

@@ -5,10 +5,14 @@ import {
   CATEGORY_LABELS,
   DATE_RANGE_LABELS,
   DEFAULT_FILTERS,
+  DEFAULT_PROFILE,
   FilterSettings,
+  PREFERENCE_OPTIONS,
   Quest,
   QuestWithDistance,
+  UserProfile,
   questMatchesDateRange,
+  questMatchesPreferences,
 } from "../types";
 import { getAllQuests } from "../data/db";
 import { haversineKm } from "../utils/location";
@@ -16,12 +20,15 @@ import { haversineKm } from "../utils/location";
 const FILTERS_KEY = "sidequest.filters";
 const SAVED_KEY = "sidequest.saved";
 const SEEN_KEY = "sidequest.seen";
+const PROFILE_KEY = "sidequest.profile";
 
 type LocationStatus = "pending" | "granted" | "denied" | "unavailable";
 
 interface AppContextValue {
   filters: FilterSettings;
   setFilters: (f: FilterSettings) => void;
+  profile: UserProfile;
+  setProfile: (p: UserProfile) => void;
   savedQuests: QuestWithDistance[];
   seenIds: string[];
   deck: QuestWithDistance[];
@@ -68,8 +75,17 @@ function sanitizeFilters(stored: FilterSettings): FilterSettings {
   };
 }
 
+function sanitizeProfile(stored: UserProfile): UserProfile {
+  const validIds = new Set(PREFERENCE_OPTIONS.map((p) => p.id));
+  return {
+    name: typeof stored.name === "string" ? stored.name : "",
+    excludedPreferenceIds: (stored.excludedPreferenceIds ?? []).filter((id) => validIds.has(id)),
+  };
+}
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<FilterSettings>(DEFAULT_FILTERS);
+  const [profile, setProfileState] = useState<UserProfile>(DEFAULT_PROFILE);
   const [savedQuests, setSavedQuests] = useState<QuestWithDistance[]>([]);
   const [seenIds, setSeenIds] = useState<string[]>([]);
   const [allQuests, setAllQuests] = useState<Quest[]>([]);
@@ -80,13 +96,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     (async () => {
       try {
-        const [rawFilters, rawSaved, rawSeen, quests] = await Promise.all([
+        const [rawFilters, rawProfile, rawSaved, rawSeen, quests] = await Promise.all([
           AsyncStorage.getItem(FILTERS_KEY),
+          AsyncStorage.getItem(PROFILE_KEY),
           AsyncStorage.getItem(SAVED_KEY),
           AsyncStorage.getItem(SEEN_KEY),
           getAllQuests(),
         ]);
         if (rawFilters) setFiltersState(sanitizeFilters(JSON.parse(rawFilters)));
+        if (rawProfile) setProfileState(sanitizeProfile(JSON.parse(rawProfile)));
         if (rawSaved) setSavedQuests(JSON.parse(rawSaved));
         if (rawSeen) setSeenIds(JSON.parse(rawSeen));
         setAllQuests(quests);
@@ -127,6 +145,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const setFilters = (f: FilterSettings) => {
     setFiltersState(f);
     AsyncStorage.setItem(FILTERS_KEY, JSON.stringify(f)).catch(() => {});
+  };
+
+  const setProfile = (p: UserProfile) => {
+    setProfileState(p);
+    AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(p)).catch(() => {});
   };
 
   const likeQuest = (quest: QuestWithDistance) => {
@@ -178,15 +201,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (q.price > filters.maxPrice) return false;
       if (filters.groupSize < q.minGroupSize || filters.groupSize > q.maxGroupSize) return false;
       if (!questMatchesDateRange(q.eventDate, filters.dateRange)) return false;
+      if (!questMatchesPreferences(q.tags, profile.excludedPreferenceIds)) return false;
       return true;
     });
-  }, [filters, seenIds, allQuests, userLocation]);
+  }, [filters, seenIds, allQuests, userLocation, profile.excludedPreferenceIds]);
 
   return (
     <AppContext.Provider
       value={{
         filters,
         setFilters,
+        profile,
+        setProfile,
         savedQuests,
         seenIds,
         deck,

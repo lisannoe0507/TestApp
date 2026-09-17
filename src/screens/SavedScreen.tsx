@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useApp } from "../context/AppContext";
+import QuestMapModal from "../components/QuestMapModal";
 import { CATEGORY_LABELS, QuestWithDistance } from "../types";
 import { colors, categoryColors, fontFamily, radius } from "../theme";
 
 export default function SavedScreen() {
   const { savedQuests, removeSaved } = useApp();
+  const [mapQuest, setMapQuest] = useState<QuestWithDistance | null>(null);
 
   const renderItem = ({ item }: { item: QuestWithDistance }) => {
     const accent = categoryColors[item.category];
     return (
-      <View style={styles.card}>
+      <TouchableOpacity style={styles.card} onPress={() => setMapQuest(item)} activeOpacity={0.8}>
         <Image source={{ uri: item.imageUrl }} style={styles.thumb} />
         <View style={styles.cardBody}>
           <Text style={[styles.category, { color: accent }]}>{CATEGORY_LABELS[item.category]}</Text>
@@ -30,7 +32,7 @@ export default function SavedScreen() {
         <TouchableOpacity style={styles.removeButton} onPress={() => removeSaved(item.id)}>
           <Ionicons name="close" size={18} color={colors.textMuted} />
         </TouchableOpacity>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -50,6 +52,7 @@ export default function SavedScreen() {
           contentContainerStyle={styles.listContent}
         />
       )}
+      <QuestMapModal quest={mapQuest} onClose={() => setMapQuest(null)} />
     </SafeAreaView>
   );
 }

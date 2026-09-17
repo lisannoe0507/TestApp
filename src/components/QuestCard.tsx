@@ -1,5 +1,6 @@
 import React, { useRef } from "react";
 import { Animated, Dimensions, PanResponder, StyleSheet, Text, View, Image } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
 import { CATEGORY_ICONS, CATEGORY_LABELS, QuestWithDistance, groupLabels } from "../types";
 import { colors, categoryColors, radius, fontFamily } from "../theme";
@@ -90,39 +91,44 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
       style={[styles.card, animatedStyle, { zIndex: 100 - stackIndex }]}
       {...(isTop ? panResponder.panHandlers : {})}
     >
-      <Text style={styles.eyebrow}>NEW QUEST</Text>
+      <Image source={{ uri: quest.imageUrl }} style={styles.image} />
 
-      <View style={styles.imageWrap}>
-        <Image source={{ uri: quest.imageUrl }} style={styles.image} />
+      <View style={styles.topRow}>
+        <View style={[styles.categoryBadge, { backgroundColor: accent }]}>
+          <Ionicons name={CATEGORY_ICONS[quest.category] as any} size={13} color={colors.surface} />
+          <Text style={styles.categoryBadgeText}>{CATEGORY_LABELS[quest.category]}</Text>
+        </View>
         <View style={styles.ratingBadge}>
           <Ionicons name="star" size={12} color={colors.text} />
           <Text style={styles.ratingText}>{quest.rating.toFixed(1)}</Text>
         </View>
-
-        {isTop && (
-          <>
-            <Animated.View style={[styles.stamp, styles.saveStamp, { opacity: saveOpacity }]}>
-              <Text style={[styles.stampText, { color: colors.brand }]}>SAVE</Text>
-            </Animated.View>
-            <Animated.View style={[styles.stamp, styles.skipStamp, { opacity: skipOpacity }]}>
-              <Text style={[styles.stampText, { color: colors.secondary }]}>SKIP</Text>
-            </Animated.View>
-          </>
-        )}
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.badgeRow}>
-          <View style={[styles.categoryBadge, { backgroundColor: accent + "26" }]}>
-            <Ionicons name={CATEGORY_ICONS[quest.category] as any} size={13} color={accent} />
-            <Text style={[styles.categoryBadgeText, { color: accent }]}>{CATEGORY_LABELS[quest.category]}</Text>
+      {isTop && (
+        <>
+          <Animated.View style={[styles.stamp, styles.saveStamp, { opacity: saveOpacity }]}>
+            <Text style={[styles.stampText, { color: colors.brand }]}>SAVE</Text>
+          </Animated.View>
+          <Animated.View style={[styles.stamp, styles.skipStamp, { opacity: skipOpacity }]}>
+            <Text style={[styles.stampText, { color: colors.secondary }]}>SKIP</Text>
+          </Animated.View>
+        </>
+      )}
+
+      <LinearGradient
+        colors={["transparent", "rgba(0,0,0,0.15)", "rgba(11,27,51,0.88)"]}
+        locations={[0, 0.5, 1]}
+        style={styles.overlay}
+      >
+        {badges.length > 0 && (
+          <View style={styles.groupRow}>
+            {badges.map((b) => (
+              <View key={b} style={styles.groupBadge}>
+                <Text style={styles.groupBadgeText}>{b}</Text>
+              </View>
+            ))}
           </View>
-          {badges.map((b) => (
-            <Text key={b} style={styles.groupBadge}>
-              {b}
-            </Text>
-          ))}
-        </View>
+        )}
 
         <Text style={styles.title}>{quest.title}</Text>
         <Text style={styles.description} numberOfLines={2}>
@@ -142,53 +148,60 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
             </>
           ) : null}
         </View>
-      </View>
+      </LinearGradient>
     </Animated.View>
   );
 }
 
-const CARD_WIDTH = SCREEN_WIDTH * 0.88;
-// Sized off screen height (not just width) so the card - image plus text
-// content below it - always leaves room for the action buttons under it,
-// regardless of the device's aspect ratio.
-const CARD_MAX_HEIGHT = SCREEN_HEIGHT * 0.6;
-const IMAGE_HEIGHT = CARD_MAX_HEIGHT * 0.56;
+const CARD_WIDTH = SCREEN_WIDTH * 0.9;
+// Sized off screen height (not just width) so it always leaves room for the
+// action buttons under it, regardless of the device's aspect ratio.
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.62;
 
 const styles = StyleSheet.create({
   card: {
     position: "absolute",
     width: CARD_WIDTH,
-    maxHeight: CARD_MAX_HEIGHT,
+    height: CARD_HEIGHT,
     borderRadius: radius.card,
     backgroundColor: colors.surface,
     overflow: "hidden",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
+    shadowOpacity: 0.12,
     shadowRadius: 16,
     elevation: 4,
-  },
-  eyebrow: {
-    fontFamily: fontFamily.semiBold,
-    fontSize: 11,
-    letterSpacing: 1.2,
-    color: colors.textMuted,
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  imageWrap: {
-    width: "100%",
-    height: IMAGE_HEIGHT,
   },
   image: {
     width: "100%",
     height: "100%",
+    position: "absolute",
+  },
+  topRow: {
+    position: "absolute",
+    top: 16,
+    left: 16,
+    right: 16,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  categoryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: radius.chip,
+    gap: 4,
+  },
+  categoryBadgeText: {
+    fontFamily: fontFamily.semiBold,
+    fontSize: 11,
+    letterSpacing: 0.4,
+    color: colors.surface,
+    marginLeft: 4,
   },
   ratingBadge: {
-    position: "absolute",
-    top: 12,
-    right: 12,
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "rgba(255,255,255,0.92)",
@@ -203,50 +216,45 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginLeft: 4,
   },
-  content: {
-    padding: 20,
+  overlay: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+    paddingBottom: 20,
   },
-  badgeRow: {
+  groupRow: {
     flexDirection: "row",
-    alignItems: "center",
     flexWrap: "wrap",
-    gap: 8,
-    marginBottom: 10,
-  },
-  categoryBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: radius.chip,
-    gap: 4,
-    marginRight: 8,
-    marginBottom: 4,
-  },
-  categoryBadgeText: {
-    fontFamily: fontFamily.semiBold,
-    fontSize: 11,
-    letterSpacing: 0.4,
-    marginLeft: 4,
+    gap: 6,
+    marginBottom: 8,
   },
   groupBadge: {
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.6)",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: radius.chip,
+    marginRight: 6,
+  },
+  groupBadgeText: {
     fontFamily: fontFamily.medium,
-    fontSize: 11,
+    fontSize: 10,
     letterSpacing: 0.6,
-    color: colors.textMuted,
-    marginRight: 8,
-    marginBottom: 4,
+    color: colors.surface,
   },
   title: {
     fontFamily: fontFamily.bold,
-    fontSize: 22,
-    color: colors.text,
+    fontSize: 24,
+    color: colors.surface,
     marginBottom: 4,
   },
   description: {
     fontFamily: fontFamily.regular,
     fontSize: 14,
-    color: colors.textMuted,
+    color: "rgba(255,255,255,0.9)",
     marginBottom: 12,
     lineHeight: 20,
   },
@@ -257,21 +265,22 @@ const styles = StyleSheet.create({
   metaText: {
     fontFamily: fontFamily.semiBold,
     fontSize: 13,
-    color: colors.text,
+    color: colors.surface,
   },
   metaDot: {
     fontFamily: fontFamily.regular,
-    color: colors.textMuted,
+    color: "rgba(255,255,255,0.7)",
     marginHorizontal: 8,
   },
   stamp: {
     position: "absolute",
-    top: 20,
-    borderWidth: 2.5,
+    top: 70,
+    borderWidth: 3,
     borderRadius: radius.chip,
     paddingHorizontal: 14,
     paddingVertical: 6,
-    backgroundColor: "rgba(255,255,255,0.85)",
+    backgroundColor: "rgba(255,255,255,0.9)",
+    zIndex: 10,
   },
   saveStamp: {
     left: 16,

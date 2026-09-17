@@ -28,14 +28,18 @@ async function ensureInitialized() {
   const existingColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(quests)");
   const tableExists = existingColumns.length > 0;
   const hasLatitude = existingColumns.some((c) => c.name === "latitude");
+  console.log("[sidequest-db] tableExists:", tableExists, "hasLatitude:", hasLatitude);
 
   let needsReset = tableExists && !hasLatitude;
   if (tableExists && hasLatitude) {
     const categoryRows = await db.getAllAsync<{ category: string }>("SELECT DISTINCT category FROM quests");
+    console.log("[sidequest-db] existing categories:", categoryRows.map((r) => r.category));
     needsReset = categoryRows.some((r) => !VALID_CATEGORIES.has(r.category));
   }
+  console.log("[sidequest-db] needsReset:", needsReset);
   if (needsReset) {
     await db.execAsync("DROP TABLE quests");
+    console.log("[sidequest-db] dropped stale quests table");
   }
 
   await db.execAsync(`
@@ -57,8 +61,11 @@ async function ensureInitialized() {
   `);
 
   const row = await db.getFirstAsync<{ count: number }>("SELECT COUNT(*) as count FROM quests");
+  console.log("[sidequest-db] row count after ensure:", row?.count);
   if (!row || row.count === 0) {
     await seedQuests(MOCK_QUESTS);
+    const after = await db.getFirstAsync<{ count: number }>("SELECT COUNT(*) as count FROM quests");
+    console.log("[sidequest-db] row count after seed:", after?.count);
   }
 }
 

@@ -80,9 +80,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (rawFilters) setFiltersState(sanitizeFilters(JSON.parse(rawFilters)));
         if (rawSaved) setSavedQuests(JSON.parse(rawSaved));
         if (rawSeen) setSeenIds(JSON.parse(rawSeen));
+        console.log("[sidequest] loaded quests:", quests.length);
         setAllQuests(quests);
       } catch (e) {
-        // Ignore corrupted local storage and start fresh.
+        console.error("[sidequest] failed to load app data:", e);
       } finally {
         setLoading(false);
       }

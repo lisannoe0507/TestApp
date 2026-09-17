@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { CATEGORY_ICONS, CATEGORY_LABELS, QuestWithDistance, groupLabels } from "../types";
 import { colors, categoryColors, radius, fontFamily } from "../theme";
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.28;
 
 interface Props {
@@ -42,7 +42,7 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
     Animated.timing(position, {
       toValue: { x, y: 0 },
       duration: 250,
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start(() => {
       position.setValue({ x: 0, y: 0 });
       direction === "right" ? onSwipeRight() : onSwipeLeft();
@@ -52,7 +52,7 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
   const resetPosition = () => {
     Animated.spring(position, {
       toValue: { x: 0, y: 0 },
-      useNativeDriver: false,
+      useNativeDriver: true,
       friction: 5,
     }).start();
   };
@@ -147,13 +147,18 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
   );
 }
 
-const CARD_WIDTH = SCREEN_WIDTH * 0.9;
-const IMAGE_HEIGHT = CARD_WIDTH * 0.95;
+const CARD_WIDTH = SCREEN_WIDTH * 0.88;
+// Sized off screen height (not just width) so the card - image plus text
+// content below it - always leaves room for the action buttons under it,
+// regardless of the device's aspect ratio.
+const CARD_MAX_HEIGHT = SCREEN_HEIGHT * 0.6;
+const IMAGE_HEIGHT = CARD_MAX_HEIGHT * 0.56;
 
 const styles = StyleSheet.create({
   card: {
     position: "absolute",
     width: CARD_WIDTH,
+    maxHeight: CARD_MAX_HEIGHT,
     borderRadius: radius.card,
     backgroundColor: colors.surface,
     overflow: "hidden",

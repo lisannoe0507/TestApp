@@ -10,7 +10,7 @@ export const MOCK_QUESTS: Quest[] = [
   // --- Restaurants ---
   {
     id: "r1",
-    category: "restaurant",
+    category: "explore",
     title: "Mr. Smith's Loft",
     description: "Populair adres in het centrum met een verrassende, eigentijdse kaart.",
     imageUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
@@ -25,7 +25,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r2",
-    category: "restaurant",
+    category: "explore",
     title: "Tantunio",
     description: "Kleinschalig restaurant in de Folkingestraat, bekend om verfijnde gerechten.",
     imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
@@ -40,7 +40,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r3",
-    category: "restaurant",
+    category: "explore",
     title: "Restaurant Naud",
     description: "Modern restaurant met een seizoensgebonden menu in het centrum.",
     imageUrl: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800",
@@ -55,7 +55,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r4",
-    category: "restaurant",
+    category: "explore",
     title: "Mr. Mofongo",
     description: "Levendig eetcafé in de uitgaansbuurt rond de Poelestraat.",
     imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800",
@@ -70,7 +70,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r5",
-    category: "restaurant",
+    category: "explore",
     title: "De Kleine Kasteleine",
     description: "Knus, sfeervol restaurant met een kleine kaart en persoonlijke bediening.",
     imageUrl: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800",
@@ -85,7 +85,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r6",
-    category: "restaurant",
+    category: "explore",
     title: "Café Hooghoudt",
     description: "Bruin café aan de Grote Markt, bekend van het Hooghoudt-jenevermerk.",
     imageUrl: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800",
@@ -100,7 +100,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r7",
-    category: "restaurant",
+    category: "explore",
     title: "Gustatio",
     description: "Italiaans geïnspireerd restaurant met verse pasta's en goede wijnkaart.",
     imageUrl: "https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=800",
@@ -115,7 +115,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r8",
-    category: "restaurant",
+    category: "explore",
     title: "Roezemoes",
     description: "Gezellige eetgelegenheid met een informele, drukke sfeer zoals de naam belooft.",
     imageUrl: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
@@ -130,7 +130,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r9",
-    category: "restaurant",
+    category: "explore",
     title: "Het Pakhuis",
     description: "Restaurant in een voormalig pakhuis met industriële uitstraling.",
     imageUrl: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800",
@@ -145,7 +145,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r10",
-    category: "restaurant",
+    category: "explore",
     title: "De Uurwerker",
     description: "Karakteristiek restaurant met een tijdloos interieur en klassieke gerechten.",
     imageUrl: "https://images.unsplash.com/photo-1560624052-449f5ddf0c31?w=800",
@@ -160,7 +160,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r11",
-    category: "restaurant",
+    category: "explore",
     title: "Belgisch Café de Pintelier",
     description: "Belgisch café met een groot assortiment bieren en stevige kost.",
     imageUrl: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800",
@@ -175,7 +175,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r12",
-    category: "restaurant",
+    category: "explore",
     title: "Restaurant Hock Sieng",
     description: "Aziatisch restaurant met een uitgebreide kaart, geliefd bij vaste gasten.",
     imageUrl: "https://images.unsplash.com/photo-1552611052-33e04de081de?w=800",
@@ -190,7 +190,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r13",
-    category: "restaurant",
+    category: "explore",
     title: "Vive la Vie",
     description: "Franse bistro-sfeer midden in het centrum van Groningen.",
     imageUrl: "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=800",
@@ -205,7 +205,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r14",
-    category: "restaurant",
+    category: "explore",
     title: "Boccaccio",
     description: "Traditionele Toscaanse keuken in een sfeervol centrumpand.",
     imageUrl: "https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=800",
@@ -220,7 +220,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r15",
-    category: "restaurant",
+    category: "explore",
     title: "Moro",
     description: "Zuid-mediterrane keuken met Spaanse invloeden en levendige sfeer.",
     imageUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
@@ -237,7 +237,7 @@ export const MOCK_QUESTS: Quest[] = [
   // --- Locaties ---
   {
     id: "l1",
-    category: "location",
+    category: "explore",
     title: "Dakterras Forum Groningen",
     description: "Gratis toegankelijk dakterras met 360°-panorama over de stad.",
     imageUrl: "https://images.unsplash.com/photo-1500534623283-312aade485b7?w=800",
@@ -252,7 +252,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l2",
-    category: "location",
+    category: "explore",
     title: "Martinitoren beklimmen",
     description: "97 meter hoge toren met een panoramisch uitzicht over Groningen, entree vereist.",
     imageUrl: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800",
@@ -267,7 +267,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l3",
-    category: "location",
+    category: "explore",
     title: "Noorderplantsoen",
     description: "Groot, populair stadspark net ten noorden van het centrum, ideaal om te picknicken.",
     imageUrl: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800",
@@ -282,7 +282,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l4",
-    category: "location",
+    category: "explore",
     title: "Prinsentuin",
     description: "Verstilde renaissancetuin achter het Prinsenhof, bereikbaar via de Turfsingel.",
     imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800",
@@ -297,7 +297,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l5",
-    category: "location",
+    category: "explore",
     title: "Hoge der A & Lage der A",
     description: "Historische kades langs de oude gracht, sfeervol om te wandelen.",
     imageUrl: "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800",
@@ -312,7 +312,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l6",
-    category: "location",
+    category: "explore",
     title: "Grote Markt",
     description: "Het bruisende hart van de stad, omringd door historische gevels.",
     imageUrl: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=800",
@@ -327,7 +327,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l7",
-    category: "location",
+    category: "explore",
     title: "Vismarkt",
     description: "Levendig plein met marktkramen, cafés en uitzicht op de Der Aa-kerk.",
     imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
@@ -342,7 +342,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l8",
-    category: "location",
+    category: "learn",
     title: "Groninger Museum",
     description: "Opvallend postmodern museumgebouw met wisselende kunst- en cultuurtentoonstellingen.",
     imageUrl: "https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=800",
@@ -357,7 +357,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l9",
-    category: "location",
+    category: "learn",
     title: "Noordelijk Scheepvaartmuseum",
     description: "Maritieme geschiedenis van Noord-Nederland met scheepsmodellen en oude kaarten.",
     imageUrl: "https://images.unsplash.com/photo-1580977276076-ae4b8c219b8e?w=800",
@@ -372,7 +372,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l10",
-    category: "location",
+    category: "learn",
     title: "Universiteitsmuseum Groningen",
     description: "400 jaar academische geschiedenis en wetenschap, met interactieve experimenten.",
     imageUrl: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800",
@@ -387,7 +387,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l11",
-    category: "location",
+    category: "learn",
     title: "Synagoge Groningen",
     description: "Gerestaureerde synagoge uit 1906 met Joodse geschiedenis en cultuur.",
     imageUrl: "https://images.unsplash.com/photo-1466442929976-97f336a657be?w=800",
@@ -402,7 +402,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l12",
-    category: "location",
+    category: "explore",
     title: "Stadspark Groningen",
     description: "Uitgestrekt groen park ten zuidwesten van het centrum, met vijvers en wandelpaden.",
     imageUrl: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800",
@@ -417,7 +417,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l13",
-    category: "location",
+    category: "explore",
     title: "Hortus Haren",
     description: "Botanische tuin met Chinese tuin en tropische kassen, net buiten de stad.",
     imageUrl: "https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=800",
@@ -432,7 +432,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "l14",
-    category: "location",
+    category: "explore",
     title: "Zuidlaardermeer uitzicht bij Noordlaren",
     description: "Weids uitzicht over het meer, populair bij zeilers en wandelaars.",
     imageUrl: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800",
@@ -449,7 +449,7 @@ export const MOCK_QUESTS: Quest[] = [
   // --- Evenementen / entertainment ---
   {
     id: "e1",
-    category: "event",
+    category: "connect",
     title: "Escape Hunt Groningen",
     description: "Escape room met knap ontworpen puzzels, ook te combineren met een diner-arrangement.",
     imageUrl: "https://images.unsplash.com/photo-1560972550-aba3456b5564?w=800",
@@ -464,7 +464,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e2",
-    category: "event",
+    category: "connect",
     title: "Multi Escape Groningen",
     description: "60 minuten durende escape room, dagelijks open van 10:00 tot 22:00.",
     imageUrl: "https://images.unsplash.com/photo-1573883430355-064e56f0da13?w=800",
@@ -479,7 +479,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e3",
-    category: "event",
+    category: "connect",
     title: "Escape Time VR Groningen",
     description: "Virtual reality escape room voor een spannende groepservaring.",
     imageUrl: "https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=800",
@@ -494,7 +494,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e4",
-    category: "event",
+    category: "connect",
     title: "VR Boxx Groningen",
     description: "VR-ervaringen: escape rooms, shooters en een Fear Experience.",
     imageUrl: "https://images.unsplash.com/photo-1592478411213-6153e4ebc696?w=800",
@@ -509,7 +509,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e5",
-    category: "event",
+    category: "connect",
     title: "VR uitje bij TB Events",
     description: "VR-escape room in het centrum waar teams samen puzzels oplossen.",
     imageUrl: "https://images.unsplash.com/photo-1626387346567-68d0e6e0f8f3?w=800",
@@ -524,7 +524,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e6",
-    category: "event",
+    category: "connect",
     title: "Live optreden bij Vera",
     description: "Legendarisch ondergronds poppodium aan de Oosterstraat waar grote artiesten hun carrière begonnen.",
     imageUrl: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800",
@@ -539,7 +539,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e7",
-    category: "event",
+    category: "connect",
     title: "Concert bij Simplon",
     description: "Poppodium met een grote en kleine zaal, gericht op jong publiek en brede muziekstijlen.",
     imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800",
@@ -554,7 +554,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e8",
-    category: "event",
+    category: "connect",
     title: "Voorstelling bij De Oosterpoort",
     description: "Theater, dans en concerten van gerenommeerde artiesten in een grote concertzaal.",
     imageUrl: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800",
@@ -569,7 +569,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e9",
-    category: "event",
+    category: "connect",
     title: "Suikermarkt Groningen",
     description: "Vintage, retro en zelfgemaakte spullen op een gezellige markt met livemuziek.",
     imageUrl: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800",
@@ -584,7 +584,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e10",
-    category: "event",
+    category: "connect",
     title: "Hullabaloo Festival",
     description: "Tweedaags festival met een mix van nationale en internationale artiesten.",
     imageUrl: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800",
@@ -599,7 +599,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e11",
-    category: "event",
+    category: "connect",
     title: "Suikerbrij Festival",
     description: "Gratis festival voor jong en oud met kunst, muziek, workshops, markten en sport.",
     imageUrl: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800",
@@ -616,7 +616,7 @@ export const MOCK_QUESTS: Quest[] = [
   // --- Cursussen / workshops ---
   {
     id: "c1",
-    category: "course",
+    category: "create",
     title: "Keramiekcursus bij Tumult Groningen",
     description: "Leer handvormen, gieten en draaien op de pottenbakkersschijf, inclusief glazuurtechnieken.",
     imageUrl: "https://images.unsplash.com/photo-1565193298357-c5b46c62d9a3?w=800",
@@ -631,7 +631,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c2",
-    category: "course",
+    category: "create",
     title: "Pottenbakken bij Atelier Potsierlijk",
     description: "Workshop en cursus pottenbakken tussen Veendam en Hoogezand-Sappemeer.",
     imageUrl: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=800",
@@ -646,7 +646,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c3",
-    category: "course",
+    category: "create",
     title: "Keramiek beschilderen bij PUCK",
     description: "Creatieve workshop waarbij je zelf keramiek beschildert.",
     imageUrl: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800",
@@ -661,7 +661,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c4",
-    category: "course",
+    category: "create",
     title: "Pottenbakles bij Crooked Garden",
     description: "Eenmalige les pottenbakken voor beginners, ook als onlinecursus te volgen.",
     imageUrl: "https://images.unsplash.com/photo-1565193566173-7a0af771d71a?w=800",
@@ -676,7 +676,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c5",
-    category: "course",
+    category: "move",
     title: "Salsales bij Salsa Juan Carlos",
     description: "Leer salsa, bachata en kizomba dansen in een gezellige, professionele setting.",
     imageUrl: "https://images.unsplash.com/photo-1504609773096-104ff2c73ba4?w=800",
@@ -691,7 +691,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c6",
-    category: "course",
+    category: "move",
     title: "Dansschool Cariño",
     description: "Salsa dansschool waar iedereen zich welkom voelt, voor beginners en gevorderden.",
     imageUrl: "https://images.unsplash.com/photo-1545959570-a94084071b5d?w=800",
@@ -706,7 +706,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c7",
-    category: "course",
+    category: "move",
     title: "Salsa Experience bij de Salsafabriek",
     description: "Workshop met hoge entertainmentwaarde, perfect voor een groepsuitje.",
     imageUrl: "https://images.unsplash.com/photo-1583266238270-8a3f5fa8e8a1?w=800",
@@ -721,7 +721,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c8",
-    category: "course",
+    category: "move",
     title: "Dance d'Alí dansschool",
     description: "Dansschool in Groningen met passie voor uiteenlopende dansstijlen.",
     imageUrl: "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
@@ -736,7 +736,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c9",
-    category: "course",
+    category: "move",
     title: "Salsa & Latin workshop bij Green Café",
     description: "Workshop geschikt voor vrijgezellenfeesten, bedrijfsuitjes en bruiloften.",
     imageUrl: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800",
@@ -751,7 +751,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "c10",
-    category: "course",
+    category: "move",
     title: "Groningen Danst",
     description: "Laagdrempelige dansschool die je graag verschillende dansstijlen leert.",
     imageUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800",

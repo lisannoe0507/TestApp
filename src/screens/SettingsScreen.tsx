@@ -4,8 +4,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
 import { useApp } from "../context/AppContext";
 import { CATEGORY_LABELS, Category } from "../types";
+import { colors, categoryColors, fontFamily, radius } from "../theme";
 
-const ALL_CATEGORIES: Category[] = ["event", "course", "restaurant", "location"];
+const ALL_CATEGORIES: Category[] = ["learn", "create", "move", "explore", "connect"];
 
 export default function SettingsScreen() {
   const { filters, setFilters, resetDeck } = useApp();
@@ -30,9 +31,9 @@ export default function SettingsScreen() {
           step={1}
           value={filters.maxDistanceKm}
           onSlidingComplete={(v) => setFilters({ ...filters, maxDistanceKm: Math.round(v) })}
-          minimumTrackTintColor="#6366F1"
-          maximumTrackTintColor="#2c2c2e"
-          thumbTintColor="#6366F1"
+          minimumTrackTintColor={colors.brand}
+          maximumTrackTintColor={colors.border}
+          thumbTintColor={colors.brand}
         />
 
         <Text style={styles.sectionTitle}>Maximale prijs per persoon</Text>
@@ -43,9 +44,9 @@ export default function SettingsScreen() {
           step={5}
           value={filters.maxPrice}
           onSlidingComplete={(v) => setFilters({ ...filters, maxPrice: Math.round(v) })}
-          minimumTrackTintColor="#6366F1"
-          maximumTrackTintColor="#2c2c2e"
-          thumbTintColor="#6366F1"
+          minimumTrackTintColor={colors.brand}
+          maximumTrackTintColor={colors.border}
+          thumbTintColor={colors.brand}
         />
 
         <Text style={styles.sectionTitle}>Aantal personen</Text>
@@ -56,19 +57,20 @@ export default function SettingsScreen() {
           step={1}
           value={filters.groupSize}
           onSlidingComplete={(v) => setFilters({ ...filters, groupSize: Math.round(v) })}
-          minimumTrackTintColor="#6366F1"
-          maximumTrackTintColor="#2c2c2e"
-          thumbTintColor="#6366F1"
+          minimumTrackTintColor={colors.brand}
+          maximumTrackTintColor={colors.border}
+          thumbTintColor={colors.brand}
         />
 
         <Text style={styles.sectionTitle}>Categorieën</Text>
         <View style={styles.chipRow}>
           {ALL_CATEGORIES.map((cat) => {
             const active = filters.categories.includes(cat);
+            const accent = categoryColors[cat];
             return (
               <TouchableOpacity
                 key={cat}
-                style={[styles.chip, active && styles.chipActive]}
+                style={[styles.chip, active && { backgroundColor: accent, borderColor: accent }]}
                 onPress={() => toggleCategory(cat)}
               >
                 <Text style={[styles.chipText, active && styles.chipTextActive]}>
@@ -84,8 +86,9 @@ export default function SettingsScreen() {
         </TouchableOpacity>
 
         <Text style={styles.footnote}>
-          Side Quest gebruikt momenteel voorbeelddata. Koppel je eigen API-key (Google Places,
-          Ticketmaster, Eventbrite, ...) om live aanbevelingen te tonen.
+          Side Quest gebruikt momenteel een eigen, handmatig samengestelde database met echte
+          plekken in Groningen. Later koppelen we live bronnen (Google Places, Ticketmaster,
+          Eventbrite, ...) als aanvulling — niet als vervanging.
         </Text>
       </ScrollView>
     </SafeAreaView>
@@ -95,7 +98,7 @@ export default function SettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0d0d0f",
+    backgroundColor: colors.background,
   },
   content: {
     paddingHorizontal: 24,
@@ -103,21 +106,21 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: "#fff",
+    fontFamily: fontFamily.bold,
+    fontSize: 26,
+    color: colors.text,
     marginBottom: 20,
   },
   sectionTitle: {
-    color: "#fff",
+    fontFamily: fontFamily.semiBold,
+    color: colors.text,
     fontSize: 15,
-    fontWeight: "700",
     marginTop: 20,
   },
   sectionValue: {
-    color: "#818cf8",
+    fontFamily: fontFamily.semiBold,
+    color: colors.brand,
     fontSize: 14,
-    fontWeight: "600",
     marginTop: 4,
     marginBottom: 4,
   },
@@ -130,40 +133,37 @@ const styles = StyleSheet.create({
   chip: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: "#1c1c1e",
+    borderRadius: radius.chip,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#2c2c2e",
+    borderColor: colors.border,
     marginRight: 10,
     marginBottom: 10,
   },
-  chipActive: {
-    backgroundColor: "#6366F1",
-    borderColor: "#6366F1",
-  },
   chipText: {
-    color: "#9ca3af",
-    fontWeight: "600",
+    fontFamily: fontFamily.medium,
+    color: colors.textMuted,
     fontSize: 13,
   },
   chipTextActive: {
-    color: "#fff",
+    color: colors.surface,
   },
   resetButton: {
     marginTop: 32,
-    backgroundColor: "#1c1c1e",
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: "#2c2c2e",
+    borderColor: colors.border,
     paddingVertical: 14,
-    borderRadius: 14,
+    borderRadius: radius.button,
     alignItems: "center",
   },
   resetButtonText: {
-    color: "#fff",
-    fontWeight: "700",
+    fontFamily: fontFamily.semiBold,
+    color: colors.text,
   },
   footnote: {
-    color: "#6b7280",
+    fontFamily: fontFamily.regular,
+    color: colors.textMuted,
     fontSize: 12,
     marginTop: 24,
     lineHeight: 18,

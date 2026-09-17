@@ -1,7 +1,8 @@
 import React, { useRef } from "react";
 import { Animated, Dimensions, PanResponder, StyleSheet, Text, View, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { CATEGORY_ICONS, CATEGORY_LABELS, QuestWithDistance } from "../types";
+import { CATEGORY_ICONS, CATEGORY_LABELS, QuestWithDistance, groupLabels } from "../types";
+import { colors, categoryColors, radius, fontFamily } from "../theme";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SWIPE_THRESHOLD = SCREEN_WIDTH * 0.28;
@@ -58,16 +59,16 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
 
   const rotate = position.x.interpolate({
     inputRange: [-SCREEN_WIDTH / 2, 0, SCREEN_WIDTH / 2],
-    outputRange: ["-10deg", "0deg", "10deg"],
+    outputRange: ["-8deg", "0deg", "8deg"],
   });
 
-  const likeOpacity = position.x.interpolate({
+  const saveOpacity = position.x.interpolate({
     inputRange: [0, SWIPE_THRESHOLD],
     outputRange: [0, 1],
     extrapolate: "clamp",
   });
 
-  const nopeOpacity = position.x.interpolate({
+  const skipOpacity = position.x.interpolate({
     inputRange: [-SWIPE_THRESHOLD, 0],
     outputRange: [1, 0],
     extrapolate: "clamp",
@@ -81,58 +82,65 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
         transform: [{ scale: 1 - stackIndex * 0.04 }, { translateY: stackIndex * 10 }],
       };
 
+  const accent = categoryColors[quest.category];
+  const badges = groupLabels(quest.minGroupSize, quest.maxGroupSize);
+
   return (
     <Animated.View
       style={[styles.card, animatedStyle, { zIndex: 100 - stackIndex }]}
       {...(isTop ? panResponder.panHandlers : {})}
     >
-      <Image source={{ uri: quest.imageUrl }} style={styles.image} />
-      <View style={styles.badgeRow}>
-        <View style={styles.categoryBadge}>
-          <Ionicons name={CATEGORY_ICONS[quest.category] as any} size={14} color="#fff" />
-          <Text style={styles.categoryBadgeText}>{CATEGORY_LABELS[quest.category]}</Text>
-        </View>
+      <Text style={styles.eyebrow}>NEW QUEST</Text>
+
+      <View style={styles.imageWrap}>
+        <Image source={{ uri: quest.imageUrl }} style={styles.image} />
         <View style={styles.ratingBadge}>
-          <Ionicons name="star" size={14} color="#FFD34D" />
+          <Ionicons name="star" size={12} color={colors.text} />
           <Text style={styles.ratingText}>{quest.rating.toFixed(1)}</Text>
         </View>
+
+        {isTop && (
+          <>
+            <Animated.View style={[styles.stamp, styles.saveStamp, { opacity: saveOpacity }]}>
+              <Text style={[styles.stampText, { color: colors.brand }]}>SAVE</Text>
+            </Animated.View>
+            <Animated.View style={[styles.stamp, styles.skipStamp, { opacity: skipOpacity }]}>
+              <Text style={[styles.stampText, { color: colors.secondary }]}>SKIP</Text>
+            </Animated.View>
+          </>
+        )}
       </View>
 
-      {isTop && (
-        <>
-          <Animated.View style={[styles.stamp, styles.likeStamp, { opacity: likeOpacity }]}>
-            <Text style={styles.likeStampText}>LEUK!</Text>
-          </Animated.View>
-          <Animated.View style={[styles.stamp, styles.nopeStamp, { opacity: nopeOpacity }]}>
-            <Text style={styles.nopeStampText}>NOPE</Text>
-          </Animated.View>
-        </>
-      )}
+      <View style={styles.content}>
+        <View style={styles.badgeRow}>
+          <View style={[styles.categoryBadge, { backgroundColor: accent + "26" }]}>
+            <Ionicons name={CATEGORY_ICONS[quest.category] as any} size={13} color={accent} />
+            <Text style={[styles.categoryBadgeText, { color: accent }]}>{CATEGORY_LABELS[quest.category]}</Text>
+          </View>
+          {badges.map((b) => (
+            <Text key={b} style={styles.groupBadge}>
+              {b}
+            </Text>
+          ))}
+        </View>
 
-      <View style={styles.infoOverlay}>
         <Text style={styles.title}>{quest.title}</Text>
         <Text style={styles.description} numberOfLines={2}>
           {quest.description}
         </Text>
+
         <View style={styles.metaRow}>
-          <View style={styles.metaItem}>
-            <Ionicons name="location-outline" size={15} color="#fff" />
-            <Text style={styles.metaText}>
-              {quest.distanceKm === null ? "? km" : `${quest.distanceKm.toFixed(1)} km`}
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Ionicons name="people-outline" size={15} color="#fff" />
-            <Text style={styles.metaText}>
-              {quest.minGroupSize === quest.maxGroupSize
-                ? `${quest.minGroupSize}p`
-                : `${quest.minGroupSize}-${quest.maxGroupSize}p`}
-            </Text>
-          </View>
-          <View style={styles.metaItem}>
-            <Ionicons name="pricetag-outline" size={15} color="#fff" />
-            <Text style={styles.metaText}>{quest.price === 0 ? "Gratis" : `€${quest.price}`}</Text>
-          </View>
+          <Text style={styles.metaText}>
+            {quest.distanceKm === null ? "? km" : `${quest.distanceKm.toFixed(1)} km`}
+          </Text>
+          <Text style={styles.metaDot}>·</Text>
+          <Text style={styles.metaText}>{quest.price === 0 ? "Gratis" : `€${quest.price}`}</Text>
+          {quest.durationMinutes ? (
+            <>
+              <Text style={styles.metaDot}>·</Text>
+              <Text style={styles.metaText}>{quest.durationMinutes} min</Text>
+            </>
+          ) : null}
         </View>
       </View>
     </Animated.View>
@@ -140,133 +148,139 @@ export default function QuestCard({ quest, onSwipeLeft, onSwipeRight, isTop, sta
 }
 
 const CARD_WIDTH = SCREEN_WIDTH * 0.9;
-const CARD_HEIGHT = CARD_WIDTH * 1.35;
+const IMAGE_HEIGHT = CARD_WIDTH * 0.95;
 
 const styles = StyleSheet.create({
   card: {
     position: "absolute",
     width: CARD_WIDTH,
-    height: CARD_HEIGHT,
-    borderRadius: 24,
-    backgroundColor: "#1c1c1e",
+    borderRadius: radius.card,
+    backgroundColor: colors.surface,
     overflow: "hidden",
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
-    shadowRadius: 12,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 4,
+  },
+  eyebrow: {
+    fontFamily: fontFamily.semiBold,
+    fontSize: 11,
+    letterSpacing: 1.2,
+    color: colors.textMuted,
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  imageWrap: {
+    width: "100%",
+    height: IMAGE_HEIGHT,
   },
   image: {
     width: "100%",
     height: "100%",
+  },
+  ratingBadge: {
     position: "absolute",
+    top: 12,
+    right: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255,255,255,0.92)",
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: radius.chip,
+    gap: 4,
+  },
+  ratingText: {
+    fontFamily: fontFamily.semiBold,
+    fontSize: 12,
+    color: colors.text,
+    marginLeft: 4,
+  },
+  content: {
+    padding: 20,
   },
   badgeRow: {
-    position: "absolute",
-    top: 16,
-    left: 16,
-    right: 16,
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 8,
+    marginBottom: 10,
   },
   categoryBadge: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.55)",
     paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingVertical: 5,
+    borderRadius: radius.chip,
     gap: 4,
+    marginRight: 8,
+    marginBottom: 4,
   },
   categoryBadgeText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
+    fontFamily: fontFamily.semiBold,
+    fontSize: 11,
+    letterSpacing: 0.4,
     marginLeft: 4,
   },
-  ratingBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.55)",
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 4,
-  },
-  ratingText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
-    marginLeft: 4,
-  },
-  infoOverlay: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: 20,
-    paddingTop: 60,
-    backgroundColor: "rgba(0,0,0,0.0)",
+  groupBadge: {
+    fontFamily: fontFamily.medium,
+    fontSize: 11,
+    letterSpacing: 0.6,
+    color: colors.textMuted,
+    marginRight: 8,
+    marginBottom: 4,
   },
   title: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "800",
-    marginBottom: 6,
-    textShadowColor: "rgba(0,0,0,0.6)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    fontFamily: fontFamily.bold,
+    fontSize: 22,
+    color: colors.text,
+    marginBottom: 4,
   },
   description: {
-    color: "#f0f0f0",
+    fontFamily: fontFamily.regular,
     fontSize: 14,
-    marginBottom: 10,
-    textShadowColor: "rgba(0,0,0,0.6)",
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 4,
+    color: colors.textMuted,
+    marginBottom: 12,
+    lineHeight: 20,
   },
   metaRow: {
     flexDirection: "row",
-    gap: 16,
-  },
-  metaItem: {
-    flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginRight: 16,
   },
   metaText: {
-    color: "#fff",
+    fontFamily: fontFamily.semiBold,
     fontSize: 13,
-    fontWeight: "600",
-    marginLeft: 4,
+    color: colors.text,
+  },
+  metaDot: {
+    fontFamily: fontFamily.regular,
+    color: colors.textMuted,
+    marginHorizontal: 8,
   },
   stamp: {
     position: "absolute",
-    top: 40,
-    borderWidth: 4,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    top: 20,
+    borderWidth: 2.5,
+    borderRadius: radius.chip,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    backgroundColor: "rgba(255,255,255,0.85)",
   },
-  likeStamp: {
-    left: 24,
-    borderColor: "#4ADE80",
-    transform: [{ rotate: "-20deg" }],
+  saveStamp: {
+    left: 16,
+    borderColor: colors.brand,
+    transform: [{ rotate: "-12deg" }],
   },
-  likeStampText: {
-    color: "#4ADE80",
-    fontSize: 30,
-    fontWeight: "900",
+  skipStamp: {
+    right: 16,
+    borderColor: colors.secondary,
+    transform: [{ rotate: "12deg" }],
   },
-  nopeStamp: {
-    right: 24,
-    borderColor: "#F87171",
-    transform: [{ rotate: "20deg" }],
-  },
-  nopeStampText: {
-    color: "#F87171",
-    fontSize: 30,
-    fontWeight: "900",
+  stampText: {
+    fontFamily: fontFamily.bold,
+    fontSize: 18,
+    letterSpacing: 1,
   },
 });

@@ -4,39 +4,43 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useApp } from "../context/AppContext";
 import { CATEGORY_LABELS, QuestWithDistance } from "../types";
+import { colors, categoryColors, fontFamily, radius } from "../theme";
 
 export default function SavedScreen() {
   const { savedQuests, removeSaved } = useApp();
 
-  const renderItem = ({ item }: { item: QuestWithDistance }) => (
-    <View style={styles.card}>
-      <Image source={{ uri: item.imageUrl }} style={styles.thumb} />
-      <View style={styles.cardBody}>
-        <Text style={styles.category}>{CATEGORY_LABELS[item.category]}</Text>
-        <Text style={styles.title} numberOfLines={1}>
-          {item.title}
-        </Text>
-        <View style={styles.metaRow}>
-          <Text style={styles.metaText}>{item.city}</Text>
-          <Text style={styles.metaDot}>·</Text>
-          <Text style={styles.metaText}>{item.distanceKm === null ? "? km" : `${item.distanceKm.toFixed(1)} km`}</Text>
-          <Text style={styles.metaDot}>·</Text>
-          <Text style={styles.metaText}>{item.price === 0 ? "Gratis" : `€${item.price}`}</Text>
+  const renderItem = ({ item }: { item: QuestWithDistance }) => {
+    const accent = categoryColors[item.category];
+    return (
+      <View style={styles.card}>
+        <Image source={{ uri: item.imageUrl }} style={styles.thumb} />
+        <View style={styles.cardBody}>
+          <Text style={[styles.category, { color: accent }]}>{CATEGORY_LABELS[item.category]}</Text>
+          <Text style={styles.title} numberOfLines={1}>
+            {item.title}
+          </Text>
+          <View style={styles.metaRow}>
+            <Text style={styles.metaText}>{item.city}</Text>
+            <Text style={styles.metaDot}>·</Text>
+            <Text style={styles.metaText}>{item.distanceKm === null ? "? km" : `${item.distanceKm.toFixed(1)} km`}</Text>
+            <Text style={styles.metaDot}>·</Text>
+            <Text style={styles.metaText}>{item.price === 0 ? "Gratis" : `€${item.price}`}</Text>
+          </View>
         </View>
+        <TouchableOpacity style={styles.removeButton} onPress={() => removeSaved(item.id)}>
+          <Ionicons name="close" size={18} color={colors.textMuted} />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.removeButton} onPress={() => removeSaved(item.id)}>
-        <Ionicons name="trash-outline" size={20} color="#F87171" />
-      </TouchableOpacity>
-    </View>
-  );
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.header}>Opgeslagen</Text>
       {savedQuests.length === 0 ? (
         <View style={styles.emptyState}>
-          <Ionicons name="heart-outline" size={56} color="#9ca3af" />
-          <Text style={styles.emptyText}>Nog niets opgeslagen. Swipe naar rechts op iets leuks!</Text>
+          <Ionicons name="bookmark-outline" size={48} color={colors.textMuted} />
+          <Text style={styles.emptyText}>Nog niets opgeslagen. Swipe rechts op iets leuks!</Text>
         </View>
       ) : (
         <FlatList
@@ -53,12 +57,12 @@ export default function SavedScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0d0d0f",
+    backgroundColor: colors.background,
   },
   header: {
-    fontSize: 28,
-    fontWeight: "900",
-    color: "#fff",
+    fontFamily: fontFamily.bold,
+    fontSize: 26,
+    color: colors.text,
     paddingHorizontal: 24,
     paddingTop: 8,
     paddingBottom: 12,
@@ -69,11 +73,16 @@ const styles = StyleSheet.create({
   },
   card: {
     flexDirection: "row",
-    backgroundColor: "#1c1c1e",
-    borderRadius: 16,
+    backgroundColor: colors.surface,
+    borderRadius: radius.card,
     marginBottom: 12,
     overflow: "hidden",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   thumb: {
     width: 72,
@@ -84,15 +93,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   category: {
-    color: "#818cf8",
+    fontFamily: fontFamily.semiBold,
     fontSize: 11,
-    fontWeight: "700",
-    textTransform: "uppercase",
+    letterSpacing: 0.4,
   },
   title: {
-    color: "#fff",
+    fontFamily: fontFamily.semiBold,
+    color: colors.text,
     fontSize: 16,
-    fontWeight: "700",
     marginTop: 2,
   },
   metaRow: {
@@ -101,11 +109,12 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   metaText: {
-    color: "#9ca3af",
+    fontFamily: fontFamily.regular,
+    color: colors.textMuted,
     fontSize: 12,
   },
   metaDot: {
-    color: "#9ca3af",
+    color: colors.textMuted,
     marginHorizontal: 6,
   },
   removeButton: {
@@ -118,7 +127,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   emptyText: {
-    color: "#9ca3af",
+    fontFamily: fontFamily.regular,
+    color: colors.textMuted,
     fontSize: 14,
     textAlign: "center",
     marginTop: 12,

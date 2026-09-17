@@ -1,6 +1,8 @@
 import * as SQLite from "expo-sqlite";
-import { Quest, Category } from "../types";
+import { Quest, Category, CATEGORY_LABELS } from "../types";
 import { MOCK_QUESTS } from "./quests";
+
+const VALID_CATEGORIES = new Set(Object.keys(CATEGORY_LABELS));
 
 // On-device SQLite database — no external account or service needed.
 // Holds the activity catalog ("quests") so new items can be added without
@@ -19,10 +21,20 @@ function getDb() {
 async function ensureInitialized() {
   const db = await getDb();
 
-  // Drop the table if it still has the old (pre-GPS) schema, so it gets
-  // recreated with latitude/longitude and reseeded below.
+  // Drop and reseed the table if it still has the old (pre-GPS) schema, or
+  // if it has rows from before the Learn/Create/Move/Explore/Connect
+  // rebrand — those ids already exist, so INSERT OR IGNORE below would
+  // never touch their now-stale category values otherwise.
   const existingColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(quests)");
-  if (existingColumns.length > 0 && !existingColumns.some((c) => c.name === "latitude")) {
+  const tableExists = existingColumns.length > 0;
+  const hasLatitude = existingColumns.some((c) => c.name === "latitude");
+
+  let needsReset = tableExists && !hasLatitude;
+  if (tableExists && hasLatitude) {
+    const categoryRows = await db.getAllAsync<{ category: string }>("SELECT DISTINCT category FROM quests");
+    needsReset = categoryRows.some((r) => !VALID_CATEGORIES.has(r.category));
+  }
+  if (needsReset) {
     await db.execAsync("DROP TABLE quests");
   }
 

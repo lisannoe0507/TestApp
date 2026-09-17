@@ -10,7 +10,7 @@ export const MOCK_QUESTS: Quest[] = [
   // --- Restaurants ---
   {
     id: "r1",
-    category: "explore",
+    category: "eatdrink",
     title: "Mr. Smith's Loft",
     description: "Populair adres in het centrum met een verrassende, eigentijdse kaart.",
     imageUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
@@ -25,7 +25,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r2",
-    category: "explore",
+    category: "eatdrink",
     title: "Tantunio",
     description: "Kleinschalig restaurant in de Folkingestraat, bekend om verfijnde gerechten.",
     imageUrl: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
@@ -40,7 +40,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r3",
-    category: "explore",
+    category: "eatdrink",
     title: "Restaurant Naud",
     description: "Modern restaurant met een seizoensgebonden menu in het centrum.",
     imageUrl: "https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?w=800",
@@ -55,7 +55,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r4",
-    category: "explore",
+    category: "eatdrink",
     title: "Mr. Mofongo",
     description: "Levendig eetcafé in de uitgaansbuurt rond de Poelestraat.",
     imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800",
@@ -70,7 +70,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r5",
-    category: "explore",
+    category: "eatdrink",
     title: "De Kleine Kasteleine",
     description: "Knus, sfeervol restaurant met een kleine kaart en persoonlijke bediening.",
     imageUrl: "https://images.unsplash.com/photo-1552566626-52f8b828add9?w=800",
@@ -85,7 +85,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r6",
-    category: "explore",
+    category: "eatdrink",
     title: "Café Hooghoudt",
     description: "Bruin café aan de Grote Markt, bekend van het Hooghoudt-jenevermerk.",
     imageUrl: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=800",
@@ -100,7 +100,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r7",
-    category: "explore",
+    category: "eatdrink",
     title: "Gustatio",
     description: "Italiaans geïnspireerd restaurant met verse pasta's en goede wijnkaart.",
     imageUrl: "https://images.unsplash.com/photo-1481931098730-318b6f776db0?w=800",
@@ -115,7 +115,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r8",
-    category: "explore",
+    category: "eatdrink",
     title: "Roezemoes",
     description: "Gezellige eetgelegenheid met een informele, drukke sfeer zoals de naam belooft.",
     imageUrl: "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800",
@@ -130,7 +130,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r9",
-    category: "explore",
+    category: "eatdrink",
     title: "Het Pakhuis",
     description: "Restaurant in een voormalig pakhuis met industriële uitstraling.",
     imageUrl: "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=800",
@@ -145,7 +145,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r10",
-    category: "explore",
+    category: "eatdrink",
     title: "De Uurwerker",
     description: "Karakteristiek restaurant met een tijdloos interieur en klassieke gerechten.",
     imageUrl: "https://images.unsplash.com/photo-1560624052-449f5ddf0c31?w=800",
@@ -160,7 +160,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r11",
-    category: "explore",
+    category: "eatdrink",
     title: "Belgisch Café de Pintelier",
     description: "Belgisch café met een groot assortiment bieren en stevige kost.",
     imageUrl: "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=800",
@@ -175,7 +175,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r12",
-    category: "explore",
+    category: "eatdrink",
     title: "Restaurant Hock Sieng",
     description: "Aziatisch restaurant met een uitgebreide kaart, geliefd bij vaste gasten.",
     imageUrl: "https://images.unsplash.com/photo-1552611052-33e04de081de?w=800",
@@ -190,7 +190,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r13",
-    category: "explore",
+    category: "eatdrink",
     title: "Vive la Vie",
     description: "Franse bistro-sfeer midden in het centrum van Groningen.",
     imageUrl: "https://images.unsplash.com/photo-1544148103-0773bf10d330?w=800",
@@ -205,7 +205,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r14",
-    category: "explore",
+    category: "eatdrink",
     title: "Boccaccio",
     description: "Traditionele Toscaanse keuken in een sfeervol centrumpand.",
     imageUrl: "https://images.unsplash.com/photo-1595295333158-4742f28fbd85?w=800",
@@ -220,7 +220,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "r15",
-    category: "explore",
+    category: "eatdrink",
     title: "Moro",
     description: "Zuid-mediterrane keuken met Spaanse invloeden en levendige sfeer.",
     imageUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800",
@@ -569,7 +569,7 @@ export const MOCK_QUESTS: Quest[] = [
   },
   {
     id: "e9",
-    category: "connect",
+    category: "shop",
     title: "Suikermarkt Groningen",
     description: "Vintage, retro en zelfgemaakte spullen op een gezellige markt met livemuziek.",
     imageUrl: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=800",

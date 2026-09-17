@@ -3,10 +3,11 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-nati
 import { SafeAreaView } from "react-native-safe-area-context";
 import Slider from "@react-native-community/slider";
 import { useApp } from "../context/AppContext";
-import { CATEGORY_LABELS, Category } from "../types";
+import { CATEGORY_LABELS, Category, DATE_RANGE_LABELS, DateRange } from "../types";
 import { colors, categoryColors, fontFamily, radius } from "../theme";
 
-const ALL_CATEGORIES: Category[] = ["learn", "create", "move", "explore", "connect"];
+const ALL_CATEGORIES: Category[] = ["learn", "create", "move", "explore", "connect", "eatdrink", "shop"];
+const ALL_DATE_RANGES: DateRange[] = ["any", "today", "week", "month", "3months"];
 
 export default function SettingsScreen() {
   const { filters, setFilters, resetDeck } = useApp();
@@ -81,6 +82,28 @@ export default function SettingsScreen() {
           })}
         </View>
 
+        <Text style={styles.sectionTitle}>Wanneer</Text>
+        <View style={styles.chipRow}>
+          {ALL_DATE_RANGES.map((range) => {
+            const active = filters.dateRange === range;
+            return (
+              <TouchableOpacity
+                key={range}
+                style={[styles.chip, active && { backgroundColor: colors.brand, borderColor: colors.brand }]}
+                onPress={() => setFilters({ ...filters, dateRange: range })}
+              >
+                <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                  {DATE_RANGE_LABELS[range]}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+        <Text style={styles.hint}>
+          Geldt alleen voor activiteiten met een vaste datum (zoals een concert of festival) —
+          plekken en cursussen zonder vaste datum blijven altijd zichtbaar.
+        </Text>
+
         <TouchableOpacity style={styles.resetButton} onPress={resetDeck}>
           <Text style={styles.resetButtonText}>Reset geziene quests</Text>
         </TouchableOpacity>
@@ -147,6 +170,13 @@ const styles = StyleSheet.create({
   },
   chipTextActive: {
     color: colors.surface,
+  },
+  hint: {
+    fontFamily: fontFamily.regular,
+    color: colors.textMuted,
+    fontSize: 12,
+    marginTop: 8,
+    lineHeight: 17,
   },
   resetButton: {
     marginTop: 32,

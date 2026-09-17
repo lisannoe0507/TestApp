@@ -1,13 +1,18 @@
 import * as SQLite from "expo-sqlite";
-import { Quest, Category, CATEGORY_LABELS } from "../types";
+import { Quest, Category } from "../types";
 import { MOCK_QUESTS } from "./quests";
-
-const VALID_CATEGORIES = new Set(Object.keys(CATEGORY_LABELS));
 
 // On-device SQLite database — no external account or service needed.
 // Holds the activity catalog ("quests") so new items can be added without
 // rebuilding the app (see addQuest below). User prefs (filters/saved/seen)
 // stay in AsyncStorage; this file only owns the content catalog.
+//
+// The built-in catalog (MOCK_QUESTS) is treated as the source of truth and
+// is fully re-synced (upsert + delete-removed) on every load — earlier this
+// only seeded once and silently ignored later edits to already-seeded rows
+// (a content-only change, like a category rename, would never reach devices
+// that had already seeded the old value). User-added quests (addQuest, ids
+// prefixed "local-") are never touched by the sync.
 
 let dbPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
@@ -21,25 +26,11 @@ function getDb() {
 async function ensureInitialized() {
   const db = await getDb();
 
-  // Drop and reseed the table if it still has the old (pre-GPS) schema, or
-  // if it has rows from before the Learn/Create/Move/Explore/Connect
-  // rebrand — those ids already exist, so INSERT OR IGNORE below would
-  // never touch their now-stale category values otherwise.
+  // Drop the table if it still has the old (pre-GPS) schema, so it gets
+  // recreated with latitude/longitude below.
   const existingColumns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(quests)");
-  const tableExists = existingColumns.length > 0;
-  const hasLatitude = existingColumns.some((c) => c.name === "latitude");
-  console.log("[sidequest-db] tableExists:", tableExists, "hasLatitude:", hasLatitude);
-
-  let needsReset = tableExists && !hasLatitude;
-  if (tableExists && hasLatitude) {
-    const categoryRows = await db.getAllAsync<{ category: string }>("SELECT DISTINCT category FROM quests");
-    console.log("[sidequest-db] existing categories:", categoryRows.map((r) => r.category));
-    needsReset = categoryRows.some((r) => !VALID_CATEGORIES.has(r.category));
-  }
-  console.log("[sidequest-db] needsReset:", needsReset);
-  if (needsReset) {
+  if (existingColumns.length > 0 && !existingColumns.some((c) => c.name === "latitude")) {
     await db.execAsync("DROP TABLE quests");
-    console.log("[sidequest-db] dropped stale quests table");
   }
 
   await db.execAsync(`
@@ -50,6 +41,8 @@ async function ensureInitialized() {
       description TEXT NOT NULL,
       image_url TEXT NOT NULL,
       price REAL NOT NULL,
+      duration_minutes INTEGER,
+      event_date TEXT,
       latitude REAL NOT NULL,
       longitude REAL NOT NULL,
       min_group_size INTEGER NOT NULL,
@@ -60,25 +53,54 @@ async function ensureInitialized() {
     );
   `);
 
-  const row = await db.getFirstAsync<{ count: number }>("SELECT COUNT(*) as count FROM quests");
-  console.log("[sidequest-db] row count after ensure:", row?.count);
-  if (!row || row.count === 0) {
-    await seedQuests(MOCK_QUESTS);
-    const after = await db.getFirstAsync<{ count: number }>("SELECT COUNT(*) as count FROM quests");
-    console.log("[sidequest-db] row count after seed:", after?.count);
+  // duration_minutes/event_date were added after the table could already
+  // exist without them.
+  const columns = await db.getAllAsync<{ name: string }>("PRAGMA table_info(quests)");
+  const columnNames = new Set(columns.map((c) => c.name));
+  if (!columnNames.has("duration_minutes")) {
+    await db.execAsync("ALTER TABLE quests ADD COLUMN duration_minutes INTEGER");
   }
+  if (!columnNames.has("event_date")) {
+    await db.execAsync("ALTER TABLE quests ADD COLUMN event_date TEXT");
+  }
+
+  await syncBuiltInQuests();
 }
 
-async function seedQuests(quests: Quest[]) {
+async function syncBuiltInQuests() {
   const db = await getDb();
-  for (const q of quests) {
+  for (const q of MOCK_QUESTS) {
     await db.runAsync(
-      `INSERT OR IGNORE INTO quests
-        (id, category, title, description, image_url, price, latitude, longitude, min_group_size, max_group_size, city, tags, rating)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [q.id, q.category, q.title, q.description, q.imageUrl, q.price, q.latitude, q.longitude, q.minGroupSize, q.maxGroupSize, q.city, JSON.stringify(q.tags), q.rating]
+      `INSERT OR REPLACE INTO quests
+        (id, category, title, description, image_url, price, duration_minutes, event_date, latitude, longitude, min_group_size, max_group_size, city, tags, rating)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        q.id,
+        q.category,
+        q.title,
+        q.description,
+        q.imageUrl,
+        q.price,
+        q.durationMinutes ?? null,
+        q.eventDate ?? null,
+        q.latitude,
+        q.longitude,
+        q.minGroupSize,
+        q.maxGroupSize,
+        q.city,
+        JSON.stringify(q.tags),
+        q.rating,
+      ]
     );
   }
+  // Drop built-in rows that no longer exist in MOCK_QUESTS, without
+  // touching user-added ones (addQuest ids are prefixed "local-").
+  const currentIds = MOCK_QUESTS.map((q) => q.id);
+  const placeholders = currentIds.map(() => "?").join(",");
+  await db.runAsync(
+    `DELETE FROM quests WHERE id NOT LIKE 'local-%' AND id NOT IN (${placeholders})`,
+    currentIds
+  );
 }
 
 function rowToQuest(row: any): Quest {
@@ -89,6 +111,8 @@ function rowToQuest(row: any): Quest {
     description: row.description,
     imageUrl: row.image_url,
     price: row.price,
+    durationMinutes: row.duration_minutes ?? undefined,
+    eventDate: row.event_date ?? undefined,
     latitude: row.latitude,
     longitude: row.longitude,
     minGroupSize: row.min_group_size,
@@ -111,9 +135,25 @@ export async function addQuest(quest: Omit<Quest, "id">): Promise<Quest> {
   const id = `local-${Date.now()}-${Math.round(Math.random() * 1e6)}`;
   await db.runAsync(
     `INSERT INTO quests
-      (id, category, title, description, image_url, price, latitude, longitude, min_group_size, max_group_size, city, tags, rating)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [id, quest.category, quest.title, quest.description, quest.imageUrl, quest.price, quest.latitude, quest.longitude, quest.minGroupSize, quest.maxGroupSize, quest.city, JSON.stringify(quest.tags), quest.rating]
+      (id, category, title, description, image_url, price, duration_minutes, event_date, latitude, longitude, min_group_size, max_group_size, city, tags, rating)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [
+      id,
+      quest.category,
+      quest.title,
+      quest.description,
+      quest.imageUrl,
+      quest.price,
+      quest.durationMinutes ?? null,
+      quest.eventDate ?? null,
+      quest.latitude,
+      quest.longitude,
+      quest.minGroupSize,
+      quest.maxGroupSize,
+      quest.city,
+      JSON.stringify(quest.tags),
+      quest.rating,
+    ]
   );
   return { ...quest, id };
 }

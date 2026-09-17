@@ -1,4 +1,4 @@
-export type Category = "learn" | "create" | "move" | "explore" | "connect";
+export type Category = "learn" | "create" | "move" | "explore" | "connect" | "eatdrink" | "shop";
 
 export interface Quest {
   id: string;
@@ -8,6 +8,10 @@ export interface Quest {
   imageUrl: string;
   price: number; // 0 = free, in euros
   durationMinutes?: number;
+  // ISO date (YYYY-MM-DD) for a one-time, dated event (a concert, festival,
+  // ...). Omitted for evergreen venues/activities, which always match any
+  // date filter - most of the current catalog.
+  eventDate?: string;
   latitude: number;
   longitude: number;
   minGroupSize: number;
@@ -24,18 +28,22 @@ export interface QuestWithDistance extends Quest {
   distanceKm: number | null;
 }
 
+export type DateRange = "any" | "today" | "week" | "month" | "3months";
+
 export interface FilterSettings {
   maxDistanceKm: number;
   maxPrice: number;
   groupSize: number;
   categories: Category[];
+  dateRange: DateRange;
 }
 
 export const DEFAULT_FILTERS: FilterSettings = {
   maxDistanceKm: 25,
   maxPrice: 50,
   groupSize: 2,
-  categories: ["learn", "create", "move", "explore", "connect"],
+  categories: ["learn", "create", "move", "explore", "connect", "eatdrink", "shop"],
+  dateRange: "any",
 };
 
 // Brand category tokens stay in English per the branding briefing, even
@@ -46,6 +54,8 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   move: "Move",
   explore: "Explore",
   connect: "Connect",
+  eatdrink: "Eat & Drink",
+  shop: "Shop",
 };
 
 export const CATEGORY_ICONS: Record<Category, string> = {
@@ -54,7 +64,37 @@ export const CATEGORY_ICONS: Record<Category, string> = {
   move: "footsteps-outline",
   explore: "telescope-outline",
   connect: "people-outline",
+  eatdrink: "restaurant-outline",
+  shop: "storefront-outline",
 };
+
+export const DATE_RANGE_LABELS: Record<DateRange, string> = {
+  any: "Altijd",
+  today: "Vandaag",
+  week: "Deze week",
+  month: "Deze maand",
+  "3months": "Binnen 3 maanden",
+};
+
+const DATE_RANGE_MAX_DAYS: Record<Exclude<DateRange, "any">, number> = {
+  today: 0,
+  week: 7,
+  month: 30,
+  "3months": 90,
+};
+
+// Evergreen quests (no eventDate) always match, whatever range is picked -
+// the filter only narrows down one-time dated events.
+export function questMatchesDateRange(eventDate: string | undefined, range: DateRange): boolean {
+  if (range === "any" || !eventDate) return true;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const target = new Date(eventDate);
+  target.setHours(0, 0, 0, 0);
+  const days = Math.round((target.getTime() - today.getTime()) / 86400000);
+  if (days < 0) return false;
+  return days <= DATE_RANGE_MAX_DAYS[range];
+}
 
 export type GroupLabel = "SOLO" | "DUO" | "GROUP" | "COMMUNITY";
 

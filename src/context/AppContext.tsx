@@ -1,7 +1,15 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-import { CATEGORY_LABELS, DEFAULT_FILTERS, FilterSettings, Quest, QuestWithDistance } from "../types";
+import {
+  CATEGORY_LABELS,
+  DATE_RANGE_LABELS,
+  DEFAULT_FILTERS,
+  FilterSettings,
+  Quest,
+  QuestWithDistance,
+  questMatchesDateRange,
+} from "../types";
 import { getAllQuests } from "../data/db";
 import { haversineKm } from "../utils/location";
 
@@ -56,6 +64,7 @@ function sanitizeFilters(stored: FilterSettings): FilterSettings {
   return {
     ...stored,
     categories: validCategories.length > 0 ? validCategories : DEFAULT_FILTERS.categories,
+    dateRange: stored.dateRange in DATE_RANGE_LABELS ? stored.dateRange : DEFAULT_FILTERS.dateRange,
   };
 }
 
@@ -80,7 +89,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         if (rawFilters) setFiltersState(sanitizeFilters(JSON.parse(rawFilters)));
         if (rawSaved) setSavedQuests(JSON.parse(rawSaved));
         if (rawSeen) setSeenIds(JSON.parse(rawSeen));
-        console.log("[sidequest] loaded quests:", quests.length);
         setAllQuests(quests);
       } catch (e) {
         console.error("[sidequest] failed to load app data:", e);
@@ -169,6 +177,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (q.distanceKm !== null && q.distanceKm > filters.maxDistanceKm) return false;
       if (q.price > filters.maxPrice) return false;
       if (filters.groupSize < q.minGroupSize || filters.groupSize > q.maxGroupSize) return false;
+      if (!questMatchesDateRange(q.eventDate, filters.dateRange)) return false;
       return true;
     });
   }, [filters, seenIds, allQuests, userLocation]);

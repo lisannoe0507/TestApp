@@ -13,6 +13,8 @@ export const colors = {
   accentLight: "#00B4D8", // light blue - fresh accents, discovery, community sections
   highlight: "#FF9E00", // amber - used sparingly for tags/new-quest highlights
   deep: "#023E8A", // dark blue - depth, contrast moments, dark headers
+  teal: "#2A9D8F", // sixth category accent (Eat & Drink) - distinct from the orange/blue family
+  plum: "#7B2CBF", // seventh category accent (Shop)
 
   success: "#0077B6",
   danger: "#FF6D00",
@@ -25,6 +27,8 @@ export const categoryColors: Record<string, string> = {
   move: colors.accentLight,
   explore: colors.deep,
   connect: colors.brand,
+  eatdrink: colors.teal,
+  shop: colors.plum,
 };
 
 export const radius = {

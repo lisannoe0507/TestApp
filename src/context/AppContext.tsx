@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
-import { DEFAULT_FILTERS, FilterSettings, Quest, QuestWithDistance } from "../types";
+import { CATEGORY_LABELS, DEFAULT_FILTERS, FilterSettings, Quest, QuestWithDistance } from "../types";
 import { getAllQuests } from "../data/db";
 import { haversineKm } from "../utils/location";
 
@@ -47,6 +47,18 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   });
 }
 
+// A previously stored FilterSettings can reference a category taxonomy that
+// no longer exists (e.g. after the Learn/Create/Move/Explore/Connect
+// rebrand) — drop unknown categories and fall back to the defaults if none
+// of the stored ones are valid, so the deck doesn't silently end up empty.
+function sanitizeFilters(stored: FilterSettings): FilterSettings {
+  const validCategories = stored.categories.filter((c) => c in CATEGORY_LABELS);
+  return {
+    ...stored,
+    categories: validCategories.length > 0 ? validCategories : DEFAULT_FILTERS.categories,
+  };
+}
+
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [filters, setFiltersState] = useState<FilterSettings>(DEFAULT_FILTERS);
   const [savedQuests, setSavedQuests] = useState<QuestWithDistance[]>([]);
@@ -65,7 +77,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           AsyncStorage.getItem(SEEN_KEY),
           getAllQuests(),
         ]);
-        if (rawFilters) setFiltersState(JSON.parse(rawFilters));
+        if (rawFilters) setFiltersState(sanitizeFilters(JSON.parse(rawFilters)));
         if (rawSaved) setSavedQuests(JSON.parse(rawSaved));
         if (rawSeen) setSeenIds(JSON.parse(rawSeen));
         setAllQuests(quests);

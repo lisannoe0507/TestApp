@@ -188,8 +188,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     AsyncStorage.setItem(SEEN_KEY, JSON.stringify([])).catch(() => {});
   };
 
+  // Shuffled once per quest load (not on every filter/swipe change) so
+  // categories are mixed through the deck instead of appearing back-to-back
+  // in the source array's order, while staying stable within a session.
+  const shuffledQuests = useMemo(() => {
+    const arr = [...allQuests];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }, [allQuests]);
+
   const deck = useMemo(() => {
-    const withDistance: QuestWithDistance[] = allQuests.map((q) => ({
+    const withDistance: QuestWithDistance[] = shuffledQuests.map((q) => ({
       ...q,
       distanceKm: userLocation ? haversineKm(userLocation.latitude, userLocation.longitude, q.latitude, q.longitude) : null,
     }));
@@ -204,7 +216,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       if (!questMatchesPreferences(q.tags, profile.excludedPreferenceIds)) return false;
       return true;
     });
-  }, [filters, seenIds, allQuests, userLocation, profile.excludedPreferenceIds]);
+  }, [filters, seenIds, shuffledQuests, userLocation, profile.excludedPreferenceIds]);
 
   return (
     <AppContext.Provider
